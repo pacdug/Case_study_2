@@ -1,25 +1,23 @@
 package model;
 
-import java.io.Serializable;
-
-public class Product implements Serializable {
-    private int id;
+public class Product {
+    private String productId;
     private String name;
     private double price;
 
-    public Product(int id, String name, double price) {
-        this.id = id;
+    // Constructors, Getters, Setters
+    public Product(String productId, String name, double price) {
+        this.productId = productId;
         this.name = name;
         this.price = price;
     }
 
-    // Getters và Setters
-    public int getId() {
-        return id;
+    public String getProductId() {
+        return productId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public String getName() {
@@ -36,15 +34,6 @@ public class Product implements Serializable {
 
     public void setPrice(double price) {
         this.price = price;
-    }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                '}';
     }
 }
 
