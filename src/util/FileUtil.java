@@ -1,19 +1,11 @@
 package util;
 
 import java.io.*;
+import java.util.List;
 
-/**
- * Utility class to handle file read/write operations for text and binary files.
- */
 public class FileUtil {
 
-    /**
-     * Ghi đối tượng vào file nhị phân
-     *
-     * @param filename tên file
-     * @param object đối tượng cần ghi
-     * @throws IOException nếu có lỗi trong quá trình ghi
-     */
+    // Ghi object thành file nhị phân
     public static void writeBinaryFile(String filename, Object object) throws IOException {
         if (filename == null || filename.isEmpty()) {
             throw new IllegalArgumentException("Filename cannot be null or empty.");
@@ -29,36 +21,27 @@ public class FileUtil {
         }
     }
 
-    /**
-     * Ghi thông tin vào file văn bản
-     *
-     * @param filename tên file
-     * @param content nội dung cần ghi
-     * @throws IOException nếu có lỗi trong quá trình ghi
-     */
-    public static void writeTextFile(String filename, String content) throws IOException {
+    // Ghi danh sách các dòng thành file CSV
+    public static void writeCSVFile(String filename, List<String[]> data) throws IOException {
         if (filename == null || filename.isEmpty()) {
             throw new IllegalArgumentException("Filename cannot be null or empty.");
         }
-        if (content == null) {
-            throw new IllegalArgumentException("Content cannot be null.");
+        if (data == null || data.isEmpty()) {
+            throw new IllegalArgumentException("Data cannot be null or empty.");
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            writer.write(content);
+            for (String[] row : data) {
+                String line = String.join(",", row);
+                writer.write(line);
+                writer.newLine();
+            }
         } catch (IOException e) {
-            throw new IOException("Failed to write content to text file: " + filename, e);
+            throw new IOException("Failed to write content to CSV file: " + filename, e);
         }
     }
 
-    /**
-     * Đọc đối tượng từ file nhị phân
-     *
-     * @param filename tên file
-     * @return đối tượng đọc được từ file
-     * @throws IOException nếu có lỗi trong quá trình đọc
-     * @throws ClassNotFoundException nếu không tìm thấy lớp của đối tượng
-     */
+    // Đọc object từ file nhị phân
     public static Object readFromBinaryFile(String filename) throws IOException, ClassNotFoundException {
         if (filename == null || filename.isEmpty()) {
             throw new IllegalArgumentException("Filename cannot be null or empty.");

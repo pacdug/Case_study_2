@@ -36,7 +36,7 @@ public class Main {
                 System.out.println("2. Sửa đơn hàng");
                 System.out.println("3. Xóa đơn hàng");
                 System.out.println("4. Xem danh sách đơn hàng");
-                System.out.println("5. Lưu đơn hàng vào file");
+                System.out.println("5. Lưu đơn hàng vào file CSV");
                 System.out.println("6. Thoát");
                 System.out.print("Chọn lựa chọn: ");
                 int choice = scanner.nextInt();
@@ -85,8 +85,8 @@ public class Main {
                             orderToEdit.setProduct(newProduct);
                             System.out.println("Đơn hàng đã được cập nhật.");
 
-                            // Ghi lại thông tin đơn hàng đã sửa vào file văn bản
-                            FileUtil.writeTextFile("orders.txt", generateOrderDetails(orders));
+                            // Ghi lại thông tin đơn hàng đã sửa vào file CSV
+                            FileUtil.writeCSVFile("orders.csv", generateOrderDetailsForCSV(orders));
 
                             // Ghi lại thông tin người dùng vào file nhị phân (nếu cần)
                             FileUtil.writeBinaryFile("users.dat", user);
@@ -126,8 +126,8 @@ public class Main {
                         break;
 
                     case 5:
-                        // Lưu đơn hàng vào file
-                        FileUtil.writeTextFile("orders.txt", generateOrderDetails(orders));
+                        // Lưu đơn hàng vào file CSV
+                        FileUtil.writeCSVFile("orders.csv", generateOrderDetailsForCSV(orders));
                         FileUtil.writeBinaryFile("users.dat", user);
                         System.out.println("Đơn hàng và thông tin người dùng đã được lưu.");
                         break;
@@ -159,14 +159,18 @@ public class Main {
         return null;
     }
 
-    private static String generateOrderDetails(List<Order> orders) {
-        StringBuilder details = new StringBuilder();
+    // Tạo dữ liệu đơn hàng cho file CSV
+    private static List<String[]> generateOrderDetailsForCSV(List<Order> orders) {
+        List<String[]> data = new ArrayList<>();
         for (Order order : orders) {
-            details.append("Order ID: ").append(order.getProduct().getProductId()).append("\n")
-                    .append("User: ").append(order.getUser().getUsername()).append("\n")
-                    .append("Product: ").append(order.getProduct().getName()).append("\n")
-                    .append("Price: ").append(order.getProduct().getPrice()).append("\n\n");
+            String[] row = new String[]{
+                    order.getProduct().getProductId(),
+                    order.getUser().getUsername(),
+                    order.getProduct().getName(),
+                    String.valueOf(order.getProduct().getPrice())
+            };
+            data.add(row);
         }
-        return details.toString();
+        return data;
     }
 }
