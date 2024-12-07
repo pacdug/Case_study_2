@@ -5,14 +5,9 @@ import java.util.List;
 
 public class FileUtil {
 
-    // Ghi object thành file nhị phân
     public static void writeBinaryFile(String filename, Object object) throws IOException {
-        if (filename == null || filename.isEmpty()) {
-            throw new IllegalArgumentException("Filename cannot be null or empty.");
-        }
-        if (object == null) {
-            throw new IllegalArgumentException("Object cannot be null.");
-        }
+        validateFileName(filename);
+        validateObject(object);
 
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename))) {
             out.writeObject(object);
@@ -21,14 +16,9 @@ public class FileUtil {
         }
     }
 
-    // Ghi danh sách các dòng thành file CSV
     public static void writeCSVFile(String filename, List<String[]> data) throws IOException {
-        if (filename == null || filename.isEmpty()) {
-            throw new IllegalArgumentException("Filename cannot be null or empty.");
-        }
-        if (data == null || data.isEmpty()) {
-            throw new IllegalArgumentException("Data cannot be null or empty.");
-        }
+        validateFileName(filename);
+        validateData(data);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             for (String[] row : data) {
@@ -41,16 +31,31 @@ public class FileUtil {
         }
     }
 
-    // Đọc object từ file nhị phân
     public static Object readFromBinaryFile(String filename) throws IOException, ClassNotFoundException {
-        if (filename == null || filename.isEmpty()) {
-            throw new IllegalArgumentException("Filename cannot be null or empty.");
-        }
+        validateFileName(filename);
 
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
             return in.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new IOException("Failed to read object from binary file: " + filename, e);
+        }
+    }
+
+    private static void validateFileName(String filename) {
+        if (filename == null || filename.isEmpty()) {
+            throw new IllegalArgumentException("Filename cannot be null or empty.");
+        }
+    }
+
+    private static void validateObject(Object object) {
+        if (object == null) {
+            throw new IllegalArgumentException("Object cannot be null.");
+        }
+    }
+
+    private static void validateData(List<String[]> data) {
+        if (data == null || data.isEmpty()) {
+            throw new IllegalArgumentException("Data cannot be null or empty.");
         }
     }
 }
