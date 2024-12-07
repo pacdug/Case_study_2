@@ -1,13 +1,14 @@
 package main;
 
 import model.*;
+import ordermanager.OrderManager;
 import service.*;
 import exception.ValidationException;
 import factory.UserFactory;
 import util.FileUtil;
-
 import java.io.IOException;
 import java.util.*;
+import static util.FileUtil.generateOrderDetailsForCSV;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,6 +17,9 @@ public class Main {
 
         // Danh sách đơn hàng
         List<Order> orders = new ArrayList<>();
+
+        // Tạo đối tượng OrderManager
+        OrderManager orderManager = new OrderManager();
 
         try {
             // Tạo đối tượng User
@@ -57,8 +61,7 @@ public class Main {
 
                         Product product = new Product(productId, productName, productPrice);
                         Order order = new Order(user, product);
-                        orders.add(order);
-                        System.out.println("Đơn hàng đã được thêm thành công.");
+                        orderManager.addOrder(orders, order);
                         break;
 
                     case 2:
@@ -66,33 +69,19 @@ public class Main {
                         System.out.print("Enter Order ID to edit: ");
                         String orderIdToEdit = scanner.nextLine();
 
-                        // Tìm đơn hàng cần sửa
-                        Order orderToEdit = findOrderById(orders, orderIdToEdit);
-                        if (orderToEdit != null) {
-                            // Nhập thông tin mới cho sản phẩm
-                            System.out.print("Enter new product ID: ");
-                            String newProductId = scanner.nextLine();
+                        System.out.print("Enter new product ID: ");
+                        String newProductId = scanner.nextLine();
 
-                            System.out.print("Enter new product name: ");
-                            String newProductName = scanner.nextLine();
+                        System.out.print("Enter new product name: ");
+                        String newProductName = scanner.nextLine();
 
-                            System.out.print("Enter new product price: ");
-                            double newProductPrice = scanner.nextDouble();
-                            scanner.nextLine();  // Đọc ký tự newline
+                        System.out.print("Enter new product price: ");
+                        double newProductPrice = scanner.nextDouble();
+                        scanner.nextLine();  // Đọc ký tự newline
 
-                            // Tạo sản phẩm mới và cập nhật đơn hàng
-                            Product newProduct = new Product(newProductId, newProductName, newProductPrice);
-                            orderToEdit.setProduct(newProduct);
-                            System.out.println("Đơn hàng đã được cập nhật.");
-
-                            // Ghi lại thông tin đơn hàng đã sửa vào file CSV
+                        Product newProduct = new Product(newProductId, newProductName, newProductPrice);
+                        if (orderManager.editOrder(orders, orderIdToEdit, newProduct)) {
                             FileUtil.writeCSVFile("orders.csv", generateOrderDetailsForCSV(orders));
-
-                            // Ghi lại thông tin người dùng vào file nhị phân (nếu cần)
-                            FileUtil.writeBinaryFile("users.dat", user);
-
-                        } else {
-                            System.out.println("Không tìm thấy đơn hàng với ID: " + orderIdToEdit);
                         }
                         break;
 
@@ -100,13 +89,8 @@ public class Main {
                         // Xóa đơn hàng
                         System.out.print("Enter Order ID to delete: ");
                         String orderIdToDelete = scanner.nextLine();
-
-                        Order orderToDelete = findOrderById(orders, orderIdToDelete);
-                        if (orderToDelete != null) {
-                            orders.remove(orderToDelete);
-                            System.out.println("Đơn hàng đã được xóa.");
-                        } else {
-                            System.out.println("Không tìm thấy đơn hàng với ID: " + orderIdToDelete);
+                        if (orderManager.deleteOrder(orders, orderIdToDelete)) {
+                            FileUtil.writeCSVFile("orders.csv", generateOrderDetailsForCSV(orders));
                         }
                         break;
 
@@ -147,30 +131,5 @@ public class Main {
             // Đóng Scanner để giải phóng tài nguyên
             scanner.close();
         }
-    }
-
-    // Tìm kiếm đơn hàng theo ID
-    private static Order findOrderById(List<Order> orders, String orderId) {
-        for (Order order : orders) {
-            if (order.getProduct().getProductId().equals(orderId)) {
-                return order;
-            }
-        }
-        return null;
-    }
-
-    // Tạo dữ liệu đơn hàng cho file CSV
-    private static List<String[]> generateOrderDetailsForCSV(List<Order> orders) {
-        List<String[]> data = new ArrayList<>();
-        for (Order order : orders) {
-            String[] row = new String[]{
-                    order.getProduct().getProductId(),
-                    order.getUser().getUsername(),
-                    order.getProduct().getName(),
-                    String.valueOf(order.getProduct().getPrice())
-            };
-            data.add(row);
-        }
-        return data;
     }
 }

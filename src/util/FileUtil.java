@@ -1,6 +1,9 @@
 package util;
 
+import model.Order;
+
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtil {
@@ -57,5 +60,19 @@ public class FileUtil {
         if (data == null || data.isEmpty()) {
             throw new IllegalArgumentException("Data cannot be null or empty.");
         }
+    }
+
+    public static List<String[]> generateOrderDetailsForCSV(List<Order> orders) {
+        List<String[]> data = new ArrayList<>();
+        for (Order order : orders) {
+            String[] row = new String[]{
+                    order.getProduct().getProductId(),
+                    order.getUser().getUsername(),
+                    order.getProduct().getName(),
+                    String.valueOf(order.getProduct().getPrice())
+            };
+            data.add(row);
+        }
+        return data;
     }
 }
