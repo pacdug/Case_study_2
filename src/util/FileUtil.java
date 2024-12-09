@@ -32,6 +32,7 @@ public class FileUtil {
         } catch (IOException e) {
             throw new IOException("Failed to write content to CSV file: " + filename, e);
         }
+
     }
 
     public static Object readFromBinaryFile(String filename) throws IOException, ClassNotFoundException {
@@ -42,18 +43,21 @@ public class FileUtil {
         } catch (IOException | ClassNotFoundException e) {
             throw new IOException("Failed to read object from binary file: " + filename, e);
         }
+
     }
 
     private static void validateFileName(String filename) {
         if (filename == null || filename.isEmpty()) {
             throw new IllegalArgumentException("Filename cannot be null or empty.");
         }
+
     }
 
     private static void validateObject(Object object) {
         if (object == null) {
             throw new IllegalArgumentException("Object cannot be null.");
         }
+
     }
 
     private static void validateData(List<String[]> data) {

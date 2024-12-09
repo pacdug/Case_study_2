@@ -129,6 +129,7 @@ public class Main {
             e.printStackTrace();
         } finally {
             // Đóng Scanner để giải phóng tài nguyên
+
             scanner.close();
         }
     }

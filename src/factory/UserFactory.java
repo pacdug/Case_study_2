@@ -7,4 +7,3 @@ public class UserFactory {
         return new User(username, email);
     }
 }
-
